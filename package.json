@@ -1,0 +1,20 @@
+{
+  "name": "nodejs_bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@ethersproject/providers": "^5.5.1",
+    "axios": "^0.24.0",
+    "cors": "^2.8.5",
+    "ethers": "^5.5.2",
+    "express": "^4.17.2",
+    "node-cron": "^3.0.0",
+    "web3": "^1.6.1"
+  }
+}
