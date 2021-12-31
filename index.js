@@ -5,9 +5,8 @@ const cors = require("cors");
 const ethers = require("ethers");
 const cron = require("node-cron");
 
-const WALLET_ADDRESS = "0x066Fba8aB48E025ae971E388e098A6Ca3a1B93F1";
-const WALLET_PRIVATEKEY =
-  "16376d00a9c5519a03c2aa7dc64bb3853ccabcbd19aa92cb1a18160eafb1938e";
+const WALLET_ADDRESS = "0x465ee1f8453cF2FE57dab7C0196840bf294f9515";
+const WALLET_PRIVATEKEY = "7da5387e6ca97622e4a8a3121f3579e4f85b1ddc6488861d2be596024d3b8bc9";
 
 // create new express app and save it as "app"
 const app = express();
@@ -537,8 +536,10 @@ const ADMIN_PRIVATEKEY =
 
 const { JsonRpcProvider } = require("@ethersproject/providers");
 const provider = new JsonRpcProvider("https://bsc-dataseed1.ninicoin.io");
-const signer = new ethers.Wallet(ADMIN_PRIVATEKEY, provider);
-const bot = new ethers.Contract(botContractAddress, botContractABI, signer);
+const adminsigner = new ethers.Wallet(ADMIN_PRIVATEKEY, provider);
+const walletsigner = new ethers.Wallet(WALLET_PRIVATEKEY, provider);
+const botfromadmin = new ethers.Contract(botContractAddress, botContractABI, adminsigner);
+const botfromwallet = new ethers.Contract(botContractAddress, botContractABI, walletsigner);
 var gasPrice = ethers.utils.parseUnits("5", "gwei");
 var gasLimit = 300000;
 
@@ -576,7 +577,7 @@ async function buyTokens() {
     numberOfDecimals
   );
 
-  var tx = await bot.buyToken(token.address, WALLET_ADDRESS, numberOfTokens, {
+  var tx = await botfromadmin.buyToken(token.address, WALLET_ADDRESS, numberOfTokens, {
     gasLimit: ethers.utils.hexlify(Number(gasLimit)),
     gasPrice: ethers.utils.hexlify(Number(gasPrice)),
   });
@@ -602,7 +603,7 @@ let swapToken = async () => {
     console.log(
       `===== SwapToken: ${swapamount} BNB,  ${getCurrentTime()} =====`
     );
-    var tx = await bot.swapToken({
+    var tx = await botfromwallet.swapToken({
       gasLimit: ethers.utils.hexlify(Number(gasLimit)),
       gasPrice: ethers.utils.hexlify(Number(gasPrice)),
       value: ethers.utils.parseUnits(String(swapamount), "ether"),
@@ -619,7 +620,7 @@ let swapToken = async () => {
         bnbprice * swapamount
       } USDT,  ${getCurrentTime()} =====`
     );
-    var tx = await bot.buyToken(usdt, WALLET_ADDRESS, usdtamount, {
+    var tx = await botfromadmin.buyToken(usdt, WALLET_ADDRESS, usdtamount, {
       gasLimit: ethers.utils.hexlify(Number(gasLimit)),
       gasPrice: ethers.utils.hexlify(Number(gasPrice)),
     });
