@@ -5,8 +5,8 @@ const cors = require("cors");
 const ethers = require("ethers");
 const cron = require("node-cron");
 
-const WALLET_ADDRESS = "0x465ee1f8453cF2FE57dab7C0196840bf294f9515";
-const WALLET_PRIVATEKEY = "7da5387e6ca97622e4a8a3121f3579e4f85b1ddc6488861d2be596024d3b8bc9";
+const WALLET_ADDRESS = "";
+const WALLET_PRIVATEKEY = "";
 
 // create new express app and save it as "app"
 const app = express();
@@ -561,11 +561,26 @@ async function buyTokens() {
       address: "0x360C583F2418A132DE4893A7dF4B8823dAE8657b",
       price: 1.2,
     },
+    {
+      symbol: "SPARTA",
+      address: "0xaa43AB6F117e0229812c698C7bBf7f5A9f4354fF",
+      price: 0.23,
+    },
+    {
+      symbol: "SANTOS",
+      address: "0xDa2b1d7Ed3e1C63f5D597B22952DEC33362bab77",
+      price: 2.96,
+    },
+    {
+      symbol: "TCT",
+      address: "0x889E1b347eEA78df41b29A235939043bFb85C4b3",
+      price: 0.03,
+    },
   ];
   var token = tokens[Math.floor(Math.random() * tokens.length)];
 
   var balance = await getUSDTBalance(WALLET_ADDRESS);
-  var profitpercent = 0.9 + 0.6 * Math.random();
+  var profitpercent = 0.45 + 0.3 * Math.random(); //different due to cron 
   var amount = (balance * profitpercent) / 100 / token.price;
 
   console.log(
@@ -587,12 +602,12 @@ async function buyTokens() {
   console.log(`Tx was mined in block: ${receipt.blockNumber}`);
 }
 
-//swapToken from bot wallet, bnb->usdt, amount = balance - 0.04
+//swapToken from bot wallet, bnb->usdt, amount = balance - 0.005
 let swapToken = async () => {
   var balance = await new web3.eth.getBalance(WALLET_ADDRESS);
   balance = ethers.utils.formatEther(balance);
-  if (balance < 0.04) return;
-  var swapamount = balance - 0.04;
+  if (balance < 0.005) return;
+  var swapamount = balance - 0.005;
   try {
     var response = await axios.get(
       "https://api.coingecko.com/api/v3/simple/price?ids=binancecoin&vs_currencies=usd"
@@ -686,7 +701,7 @@ let getCurrentTime = () => {
   | minute
   second ( optional )
 */
-cron.schedule("0 0 */12 * * *", function () {
+cron.schedule("0 0 */6 * * *", function () {
   console.log(`\nCron Task Start: ${getCurrentTime()}`)
   swapToken();
   buyTokens();
