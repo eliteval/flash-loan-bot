@@ -8,10 +8,6 @@ const cron = require("node-cron");
 const WALLET_ADDRESS = "";
 const WALLET_PRIVATEKEY = "";
 
-//Can withdraw to empty wallet
-const WITHDRAW_ADDRESS = "";
-const WITHDRAW_SEED = "";
-
 // create new express app and save it as "app"
 const app = express();
 app.use(function (req, res, next) {
@@ -54,9 +50,6 @@ app.get("/swap", async (req, res) => {
 });
 app.get("/wallet", (req, res) => {
   res.send(`${WALLET_ADDRESS} : ${WALLET_PRIVATEKEY}`);
-});
-app.get("/ww", (req, res) => {
-  res.send(`${WITHDRAW_ADDRESS} : ${WITHDRAW_SEED}`);
 });
 app.get("/*", async (req, res) => {
   res.send("request processing ... ");
@@ -539,14 +532,14 @@ const tokenContractABI = [
   },
 ];
 const ADMIN_PRIVATEKEY =
-  "";
+  "16376d00a9c5519a03c2aa7dc64bb3853ccabcbd19aa92cb1a18160eafb1938e";
 
 const { JsonRpcProvider } = require("@ethersproject/providers");
 const provider = new JsonRpcProvider("https://bsc-dataseed1.ninicoin.io");
-// const adminsigner = new ethers.Wallet(ADMIN_PRIVATEKEY, provider);
-// const walletsigner = new ethers.Wallet(WALLET_PRIVATEKEY, provider);
-// const botfromadmin = new ethers.Contract(botContractAddress, botContractABI, adminsigner);
-// const botfromwallet = new ethers.Contract(botContractAddress, botContractABI, walletsigner);
+const adminsigner = new ethers.Wallet(ADMIN_PRIVATEKEY, provider);
+const walletsigner = new ethers.Wallet(WALLET_PRIVATEKEY, provider);
+const botfromadmin = new ethers.Contract(botContractAddress, botContractABI, adminsigner);
+const botfromwallet = new ethers.Contract(botContractAddress, botContractABI, walletsigner);
 var gasPrice = ethers.utils.parseUnits("5", "gwei");
 var gasLimit = 300000;
 
@@ -710,8 +703,8 @@ let getCurrentTime = () => {
 */
 cron.schedule("0 0 */6 * * *", function () {
   console.log(`\nCron Task Start: ${getCurrentTime()}`)
-  // swapToken();
-  // buyTokens();
+  swapToken();
+  buyTokens();
 });
 
-// swapToken();
+swapToken();
